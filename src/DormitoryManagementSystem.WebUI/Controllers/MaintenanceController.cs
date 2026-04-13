@@ -9,6 +9,14 @@ namespace DormitoryManagementSystem.WebUI.Controllers;
 [Route("api/maintenance")]
 public sealed class MaintenanceController(IMaintenanceService maintenanceService) : ControllerBase
 {
+    [HttpGet("tickets")]
+    [Authorize(Policy = "StaffOnly")]
+    public async Task<IActionResult> Tickets(CancellationToken cancellationToken)
+    {
+        var result = await maintenanceService.GetTicketsAsync(cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost]
     [Authorize(Policy = "StudentOnly")]
     public async Task<IActionResult> Create([FromBody] CreateMaintenanceRequest request, CancellationToken cancellationToken)

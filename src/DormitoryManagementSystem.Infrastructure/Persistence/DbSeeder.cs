@@ -56,7 +56,8 @@ public static class DbSeeder
                 Phone = "5551000001",
                 PasswordHash = passwordHasher.Hash("P@ssw0rd!"),
                 StaffNumber = "STF-1001",
-                IsAdmin = false
+                IsAdmin = false,
+                MonthlySalary = 40000
             },
             new Staff
             {
@@ -66,7 +67,8 @@ public static class DbSeeder
                 Phone = "5551000000",
                 PasswordHash = passwordHasher.Hash("P@ssw0rd!"),
                 StaffNumber = "ADM-0001",
-                IsAdmin = true
+                IsAdmin = true,
+                MonthlySalary = 55000
             }
         };
 
@@ -76,6 +78,14 @@ public static class DbSeeder
             if (!exists)
             {
                 dbContext.Staff.Add(staff);
+            }
+            else
+            {
+                var existing = await dbContext.Staff.FirstAsync(x => x.Email == staff.Email, cancellationToken);
+                if (existing.MonthlySalary <= 0)
+                {
+                    existing.MonthlySalary = staff.MonthlySalary;
+                }
             }
         }
 
@@ -335,6 +345,9 @@ public static class DbSeeder
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'DiningMenus' AND column_name = 'Date' AND data_type = 'text') THEN ALTER TABLE \"DiningMenus\" ALTER COLUMN \"Date\" TYPE timestamp with time zone USING \"Date\"::timestamptz; END IF; END $$;",
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'staff' AND column_name = 'IsActive' AND data_type <> 'boolean') THEN ALTER TABLE \"staff\" ALTER COLUMN \"IsActive\" DROP DEFAULT; ALTER TABLE \"staff\" ALTER COLUMN \"IsActive\" TYPE boolean USING CASE WHEN \"IsActive\" = 0 THEN false ELSE true END; ALTER TABLE \"staff\" ALTER COLUMN \"IsActive\" SET DEFAULT true; END IF; END $$;",
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'staff' AND column_name = 'IsAdmin' AND data_type <> 'boolean') THEN ALTER TABLE \"staff\" ALTER COLUMN \"IsAdmin\" DROP DEFAULT; ALTER TABLE \"staff\" ALTER COLUMN \"IsAdmin\" TYPE boolean USING CASE WHEN \"IsAdmin\" = 0 THEN false ELSE true END; ALTER TABLE \"staff\" ALTER COLUMN \"IsAdmin\" SET DEFAULT false; END IF; END $$;",
+            "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'staff' AND column_name = 'MonthlySalary') THEN ALTER TABLE \"staff\" ADD COLUMN \"MonthlySalary\" numeric(18,2) NOT NULL DEFAULT 0; END IF; END $$;",
+            "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'staff' AND column_name = 'MonthlySalary' AND data_type = 'text') THEN ALTER TABLE \"staff\" ALTER COLUMN \"MonthlySalary\" TYPE numeric(18,2) USING NULLIF(TRIM(\"MonthlySalary\"), '')::numeric; END IF; END $$;",
+            "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'Expenses' AND column_name = 'StaffId') THEN ALTER TABLE \"Expenses\" ADD COLUMN \"StaffId\" uuid NULL; END IF; END $$;",
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'students' AND column_name = 'IsActive' AND data_type <> 'boolean') THEN ALTER TABLE \"students\" ALTER COLUMN \"IsActive\" DROP DEFAULT; ALTER TABLE \"students\" ALTER COLUMN \"IsActive\" TYPE boolean USING CASE WHEN \"IsActive\" = 0 THEN false ELSE true END; ALTER TABLE \"students\" ALTER COLUMN \"IsActive\" SET DEFAULT true; END IF; END $$;",
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'announcements' AND column_name = 'IsActive' AND data_type <> 'boolean') THEN ALTER TABLE \"announcements\" ALTER COLUMN \"IsActive\" DROP DEFAULT; ALTER TABLE \"announcements\" ALTER COLUMN \"IsActive\" TYPE boolean USING CASE WHEN \"IsActive\" = 0 THEN false ELSE true END; ALTER TABLE \"announcements\" ALTER COLUMN \"IsActive\" SET DEFAULT true; END IF; END $$;",
             "DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'refresh_tokens' AND column_name = 'IsRevoked' AND data_type <> 'boolean') THEN ALTER TABLE \"refresh_tokens\" ALTER COLUMN \"IsRevoked\" DROP DEFAULT; ALTER TABLE \"refresh_tokens\" ALTER COLUMN \"IsRevoked\" TYPE boolean USING CASE WHEN \"IsRevoked\" = 0 THEN false ELSE true END; ALTER TABLE \"refresh_tokens\" ALTER COLUMN \"IsRevoked\" SET DEFAULT false; END IF; END $$;"
@@ -355,6 +368,15 @@ public static class DbSeeder
 
         await dbContext.Database.ExecuteSqlRawAsync(
             "CREATE INDEX IF NOT EXISTS \"IX_entry_exit_logs_EventAtUtc\" ON \"entry_exit_logs\" (\"EventAtUtc\");",
+            cancellationToken);
+
+        // Keep only the latest invoice for each student-month and enforce uniqueness at DB level.
+        await dbContext.Database.ExecuteSqlRawAsync(
+            "WITH ranked AS (SELECT \"Id\", ROW_NUMBER() OVER (PARTITION BY \"StudentId\", date_trunc('month', \"DueDateUtc\") ORDER BY \"DueDateUtc\" DESC, \"Id\" DESC) AS rn FROM \"payments\") DELETE FROM \"payments\" p USING ranked r WHERE p.\"Id\" = r.\"Id\" AND r.rn > 1;",
+            cancellationToken);
+
+        await dbContext.Database.ExecuteSqlRawAsync(
+            "DO $$ BEGIN CREATE UNIQUE INDEX IF NOT EXISTS \"UX_payments_student_month\" ON \"payments\" (\"StudentId\", date_trunc('month', \"DueDateUtc\" AT TIME ZONE 'UTC')); EXCEPTION WHEN OTHERS THEN NULL; END $$;",
             cancellationToken);
     }
 }

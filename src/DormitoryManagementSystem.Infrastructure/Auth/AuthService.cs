@@ -8,6 +8,7 @@ using DormitoryManagementSystem.Infrastructure.Persistence;
 using DormitoryManagementSystem.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace DormitoryManagementSystem.Infrastructure.Auth;
 
@@ -20,13 +21,17 @@ public sealed class AuthService(
 {
     public async Task<AuthResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
-        var student = await dbContext.Students.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+        var student = await ExecuteWithRetryAsync(
+            () => dbContext.Students.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken),
+            cancellationToken);
         if (student is not null && passwordHasher.Verify(request.Password, student.PasswordHash))
         {
             return await IssueTokensAsync(student.Id, student.Email, "Student", cancellationToken);
         }
 
-        var staff = await dbContext.Staff.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+        var staff = await ExecuteWithRetryAsync(
+            () => dbContext.Staff.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken),
+            cancellationToken);
         if (staff is null || !passwordHasher.Verify(request.Password, staff.PasswordHash))
         {
             return null;
@@ -86,7 +91,7 @@ public sealed class AuthService(
             TokenHash = refreshTokenHash,
             ExpiresAtUtc = DateTime.UtcNow.AddDays(refreshOptions.Value.ExpiryDays)
         });
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await ExecuteWithRetryAsync(() => dbContext.SaveChangesAsync(cancellationToken), cancellationToken);
 
         return new AuthResponse
         {
@@ -95,5 +100,36 @@ public sealed class AuthService(
             Role = role,
             AccessTokenExpiresAtUtc = DateTime.UtcNow.AddMinutes(jwtOptions.Value.AccessTokenMinutes)
         };
+    }
+
+    private static bool IsTransient(Exception exception)
+    {
+        return exception is NpgsqlException || exception is TimeoutException;
+    }
+
+    private static async Task<T> ExecuteWithRetryAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await operation();
+        }
+        catch (Exception ex) when (IsTransient(ex))
+        {
+            await Task.Delay(150, cancellationToken);
+            return await operation();
+        }
+    }
+
+    private static async Task ExecuteWithRetryAsync(Func<Task> operation, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await operation();
+        }
+        catch (Exception ex) when (IsTransient(ex))
+        {
+            await Task.Delay(150, cancellationToken);
+            await operation();
+        }
     }
 }

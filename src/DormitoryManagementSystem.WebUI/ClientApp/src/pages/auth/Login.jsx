@@ -14,13 +14,31 @@ export const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const loginWithRetry = async (credentials) => {
+        try {
+            return await login(credentials);
+        } catch (firstError) {
+            const firstStatus = firstError?.response?.status;
+            const shouldRetry = !firstError?.response || firstStatus === 500 || firstStatus === 503;
+
+            if (!shouldRetry) {
+                throw firstError;
+            }
+
+            await wait(700);
+            return login(credentials);
+        }
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     
     try {
-      const authData = await login({ email, password });
+            const authData = await loginWithRetry({ email, password });
       
       // Route based on role
       if (authData.role === "Admin") navigate("/admin");
@@ -33,11 +51,13 @@ export const Login = () => {
             const apiMessage = err?.response?.data?.message || err?.response?.data?.Message;
 
             if (!err?.response) {
-                setError("Backend'e baglanilamadi. API'nin http://localhost:5048 adresinde calistigini kontrol et.");
+                setError("Could not connect to backend. Make sure the API is running at http://localhost:5048.");
             } else if (status === 401) {
-                setError("Kimlik dogrulama basarisiz. E-posta veya sifre hatali.");
+                setError("Authentication failed. Email or password is incorrect.");
+            } else if (status === 500 || status === 503) {
+                setError("Backend is starting up or temporarily unavailable. Please try again in a few seconds.");
             } else {
-                setError(apiMessage || "Giris sirasinda beklenmeyen bir hata olustu.");
+                setError(apiMessage || "An unexpected error occurred during sign in.");
             }
     } finally {
       setLoading(false);

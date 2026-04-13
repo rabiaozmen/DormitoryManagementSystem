@@ -9,3 +9,4 @@ C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\refint\DormitoryManagementSystem.Domain.dll
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.pdb
 c:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\ref\DormitoryManagementSystem.Domain.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.sourcelink.json

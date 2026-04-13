@@ -52,7 +52,7 @@ export default function RoomMap() {
       if (prefixMatch) {
         const floorNo = prefixMatch[1].charCodeAt(0) - 64;
         if (floorNo >= 1 && floorNo <= 4) {
-          return { key: `${floorNo}`, label: `${floorNo}. Kat`, order: floorNo };
+          return { key: `${floorNo}`, label: `Floor ${floorNo}`, order: floorNo };
         }
       }
 
@@ -62,11 +62,11 @@ export default function RoomMap() {
       if (!Number.isNaN(numeric) && numeric >= 100) {
         const floorNo = Math.floor(numeric / 100);
         if (floorNo >= 1 && floorNo <= 4) {
-          return { key: `${floorNo}`, label: `${floorNo}. Kat`, order: floorNo };
+          return { key: `${floorNo}`, label: `Floor ${floorNo}`, order: floorNo };
         }
       }
 
-      return { key: "other", label: "Diğer", order: 99 };
+      return { key: "other", label: "Other", order: 99 };
     };
 
     const floorMap = rooms.reduce((acc, room) => {
@@ -87,7 +87,7 @@ export default function RoomMap() {
 
     const expectedFloors = [1, 2, 3, 4].map((floorNo) => ({
       key: `${floorNo}`,
-      label: `${floorNo}. Kat`,
+      label: `Floor ${floorNo}`,
       order: floorNo,
       rooms: []
     }));

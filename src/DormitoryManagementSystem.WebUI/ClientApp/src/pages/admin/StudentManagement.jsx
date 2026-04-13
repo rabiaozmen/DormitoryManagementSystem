@@ -12,7 +12,6 @@ import { EmptyState } from "../../components/ui/EmptyState";
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "0+", "0-"];
 
 const buildInitialFormValues = () => ({
-  studentGuid: crypto.randomUUID(),
   firstName: "",
   lastName: "",
   email: "",
@@ -28,17 +27,16 @@ const buildInitialFormValues = () => ({
 });
 
 const validationSchema = Yup.object({
-  studentGuid: Yup.string().uuid("Geçerli bir UUID/Guid değeri gerekli").required("UUID/Guid zorunludur"),
-  firstName: Yup.string().trim().required("Ad zorunludur"),
-  lastName: Yup.string().trim().required("Soyad zorunludur"),
-  email: Yup.string().email("Geçerli bir e-posta girin").required("E-posta zorunludur"),
-  password: Yup.string().min(8, "Şifre en az 8 karakter olmalıdır").required("Şifre zorunludur"),
-  phone: Yup.string().trim().required("Telefon zorunludur"),
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
+  email: Yup.string().email("Enter a valid email").required("Email is required"),
+  password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+  phone: Yup.string().trim().required("Phone is required"),
   tcIdentityNumber: Yup.string()
-    .matches(/^\d{11}$/, "TC Kimlik No 11 haneli olmalıdır")
-    .required("TC Kimlik No zorunludur"),
-  birthDate: Yup.string().required("Doğum tarihi zorunludur"),
-  departmentId: Yup.string().required("Bölüm seçimi zorunludur"),
+    .matches(/^\d{11}$/, "National ID must be 11 digits")
+    .required("National ID is required"),
+  birthDate: Yup.string().required("Birth date is required"),
+  departmentId: Yup.string().required("Department selection is required"),
   roomId: Yup.string(),
   bloodType: Yup.string(),
 });
@@ -92,7 +90,6 @@ export default function StudentManagement() {
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       try {
         await createStudent({
-          id: values.studentGuid,
           firstName: values.firstName.trim(),
           lastName: values.lastName.trim(),
           email: values.email.trim(),
@@ -112,7 +109,7 @@ export default function StudentManagement() {
         resetForm({ values: buildInitialFormValues() });
         await loadData();
       } catch (error) {
-        emitErrorToast(error?.response?.data?.message ?? error?.response?.data?.Message ?? "Ogrenci olusturulurken hata olustu.");
+        emitErrorToast(error?.response?.data?.message ?? error?.response?.data?.Message ?? "An error occurred while creating the student.");
       } finally {
         setSubmitting(false);
       }
@@ -123,8 +120,8 @@ export default function StudentManagement() {
     () =>
       students.map((student) => ({
         ...student,
-        bloodType: student.bloodType || "Belirtilmedi",
-        roomStatus: student.roomNumber && student.roomNumber !== "N/A" ? "Dolu" : "Boş",
+        bloodType: student.bloodType || "Not specified",
+        roomStatus: student.roomNumber && student.roomNumber !== "N/A" ? "Occupied" : "Vacant",
       })),
     [students],
   );
@@ -156,14 +153,14 @@ export default function StudentManagement() {
       await toggleStudentActive(id);
       await loadData();
     } catch {
-      emitErrorToast("Durum guncellenemedi.");
+      emitErrorToast("Status could not be updated.");
     } finally {
       setTogglingStudentId(null);
     }
   };
 
   if (loading) {
-    return <div className="p-8 text-slate-500">Öğrenci listesi yükleniyor...</div>;
+    return <div className="p-8 text-slate-500">Loading student list...</div>;
   }
 
   return (
@@ -171,7 +168,7 @@ export default function StudentManagement() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Student Records</h1>
-          <p className="text-slate-500 mt-1">Öğrencileri filtreleyin, durumlarını takip edin ve yeni kayıt ekleyin.</p>
+          <p className="text-slate-500 mt-1">Filter students, track status, and add new registrations.</p>
         </div>
         <Button
           onClick={() => {
@@ -189,7 +186,7 @@ export default function StudentManagement() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Ad veya No ara..."
+            placeholder="Search by name or number..."
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white shadow-sm"
@@ -201,7 +198,7 @@ export default function StudentManagement() {
           onChange={(event) => setDepartmentFilter(event.target.value)}
           className="px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="all">Bölüm: Tümü</option>
+          <option value="all">Department: All</option>
           {departments.map((department) => (
             <option key={department.id} value={department.name}>
               {department.name}
@@ -214,7 +211,7 @@ export default function StudentManagement() {
           onChange={(event) => setBloodFilter(event.target.value)}
           className="px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="all">Kan Grubu: Tümü</option>
+          <option value="all">Blood Type: All</option>
           {bloodTypeOptions.map((bloodType) => (
             <option key={bloodType} value={bloodType}>
               {bloodType}
@@ -227,9 +224,9 @@ export default function StudentManagement() {
           onChange={(event) => setRoomStatusFilter(event.target.value)}
           className="px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="all">Oda Durumu: Tümü</option>
-          <option value="Dolu">Dolu</option>
-          <option value="Boş">Boş</option>
+          <option value="all">Room Status: All</option>
+          <option value="Occupied">Occupied</option>
+          <option value="Vacant">Vacant</option>
         </select>
       </div>
 
@@ -240,12 +237,12 @@ export default function StudentManagement() {
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Student</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Bölüm</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kan Grubu</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Oda</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Durum</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Veli/Vasi</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">İşlem</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Department</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Blood Type</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Room</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Guardian</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -264,8 +261,8 @@ export default function StudentManagement() {
                         <p className="text-sm font-bold text-slate-900 inline-flex items-center gap-2">
                           <span>{student.fullName}</span>
                           {student.hasOverduePayment ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700" title="Odemesi gecikmis">
-                              <AlertTriangle size={12} /> Gecikme
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700" title="Overdue payment">
+                              <AlertTriangle size={12} /> Overdue
                             </span>
                           ) : null}
                         </p>
@@ -282,16 +279,16 @@ export default function StudentManagement() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          student.roomStatus === "Dolu" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+                          student.roomStatus === "Occupied" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
                         }`}
                       >
-                        {student.roomStatus === "Dolu" ? `Room ${student.roomNumber}` : "Unassigned"}
+                        {student.roomStatus === "Occupied" ? `Room ${student.roomNumber}` : "Unassigned"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={statusBadge(student.isActive)}>
                         {student.isActive ? <ShieldCheck size={14} className="mr-1.5" /> : <ShieldX size={14} className="mr-1.5" />}
-                        {student.isActive ? "Aktif" : "Mezun"}
+                        {student.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -299,12 +296,12 @@ export default function StudentManagement() {
                         <a
                           href={toTelHref(student.guardianPhone)}
                           className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
-                          title={`${student.guardianFullName || "Veli"} - ${student.guardianPhone}`}
+                          title={`${student.guardianFullName || "Guardian"} - ${student.guardianPhone}`}
                         >
-                          <PhoneCall size={13} /> Hemen Ara
+                          <PhoneCall size={13} /> Call Now
                         </a>
                       ) : (
-                        <span className="text-xs text-slate-400">Veli bilgisi yok</span>
+                        <span className="text-xs text-slate-400">No guardian info</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -315,7 +312,7 @@ export default function StudentManagement() {
                         size="sm"
                         className={student.isActive ? "text-amber-600 border-amber-100 hover:bg-amber-50" : "text-emerald-600 border-emerald-100 hover:bg-emerald-50"}
                       >
-                        {student.isActive ? "Pasifleştir" : "Aktifleştir"}
+                        {student.isActive ? "Deactivate" : "Activate"}
                       </Button>
                     </td>
                   </motion.tr>
@@ -360,21 +357,7 @@ export default function StudentManagement() {
               <form onSubmit={formik.handleSubmit} className="p-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">UUID / Guid</label>
-                    <input
-                      name="studentGuid"
-                      value={formik.values.studentGuid}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200 font-mono text-sm"
-                    />
-                    {formik.touched.studentGuid && formik.errors.studentGuid ? (
-                      <p className="mt-1 text-xs text-rose-600">{formik.errors.studentGuid}</p>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">TC Kimlik No</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">National ID</label>
                     <input
                       name="tcIdentityNumber"
                       value={formik.values.tcIdentityNumber}
@@ -383,7 +366,7 @@ export default function StudentManagement() {
                         formik.setFieldValue("tcIdentityNumber", onlyDigits);
                       }}
                       onBlur={formik.handleBlur}
-                      placeholder="11 hane"
+                      placeholder="11 digits"
                       inputMode="numeric"
                       maxLength={11}
                       className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200"
@@ -394,13 +377,13 @@ export default function StudentManagement() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Ad</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">First Name</label>
                     <input name="firstName" value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
                     {formik.touched.firstName && formik.errors.firstName ? <p className="mt-1 text-xs text-rose-600">{formik.errors.firstName}</p> : null}
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Soyad</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Last Name</label>
                     <input name="lastName" value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
                     {formik.touched.lastName && formik.errors.lastName ? <p className="mt-1 text-xs text-rose-600">{formik.errors.lastName}</p> : null}
                   </div>
@@ -412,21 +395,21 @@ export default function StudentManagement() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Telefon</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Phone</label>
                     <input name="phone" value={formik.values.phone} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
                     {formik.touched.phone && formik.errors.phone ? <p className="mt-1 text-xs text-rose-600">{formik.errors.phone}</p> : null}
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Doğum Tarihi</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Birth Date</label>
                     <input name="birthDate" type="date" value={formik.values.birthDate} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
                     {formik.touched.birthDate && formik.errors.birthDate ? <p className="mt-1 text-xs text-rose-600">{formik.errors.birthDate}</p> : null}
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Bölüm</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Department</label>
                     <select name="departmentId" value={formik.values.departmentId} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200 bg-white">
-                      <option value="">Bölüm seçin</option>
+                      <option value="">Select department</option>
                       {departments.map((department) => (
                         <option key={department.id} value={department.id}>
                           {department.name}
@@ -437,9 +420,9 @@ export default function StudentManagement() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Kan Grubu</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Blood Type</label>
                     <select name="bloodType" value={formik.values.bloodType} onChange={formik.handleChange} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200 bg-white">
-                      <option value="">Belirtilmedi</option>
+                      <option value="">Not specified</option>
                       {BLOOD_TYPES.map((bloodType) => (
                         <option key={bloodType} value={bloodType}>
                           {bloodType}
@@ -449,7 +432,7 @@ export default function StudentManagement() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Oda (Opsiyonel)</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Room (Optional)</label>
                     <select name="roomId" value={formik.values.roomId} onChange={formik.handleChange} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200 bg-white">
                       <option value="">Auto-assign first available room</option>
                       {rooms
@@ -463,31 +446,31 @@ export default function StudentManagement() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase">Şifre</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Password</label>
                     <input name="password" type="password" value={formik.values.password} onChange={formik.handleChange} onBlur={formik.handleBlur} className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
                     {formik.touched.password && formik.errors.password ? <p className="mt-1 text-xs text-rose-600">{formik.errors.password}</p> : null}
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Saglik Durumu</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Health Status</label>
                     <textarea
                       name="healthStatus"
                       value={formik.values.healthStatus}
                       onChange={formik.handleChange}
                       rows={3}
-                      placeholder="Kronik durum, duzenli ilac vb."
+                      placeholder="Chronic conditions, medications, etc."
                       className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Alerjen Gida Bilgisi</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">Food Allergy Information</label>
                     <textarea
                       name="allergenFoodInfo"
                       value={formik.values.allergenFoodInfo}
                       onChange={formik.handleChange}
                       rows={3}
-                      placeholder="Alerjiler, kaciniilmasi gereken gida turleri"
+                      placeholder="Allergies and foods to avoid"
                       className="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200"
                     />
                   </div>
@@ -498,7 +481,7 @@ export default function StudentManagement() {
                     Cancel
                   </Button>
                   <Button type="submit" loading={formik.isSubmitting} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60">
-                    <Save size={18} className="mr-2" /> Kaydet
+                    <Save size={18} className="mr-2" /> Save
                   </Button>
                 </div>
               </form>

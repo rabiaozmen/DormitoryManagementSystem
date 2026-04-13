@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
     const shouldToastSuccess = ["post", "put", "patch", "delete"].includes(method) && !response?.config?.silentSuccessToast;
 
     if (shouldToastSuccess) {
-      emitSuccessToast("Islem basariyla tamamlandi.");
+      emitSuccessToast("Operation completed successfully.");
     }
 
     return response;
@@ -52,14 +52,17 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed, user needs to login again
         accessToken = null;
-        const refreshMessage = refreshError?.response?.data?.message || refreshError?.response?.data?.Message || "Oturum yenilenemedi.";
+        const refreshMessage = refreshError?.response?.data?.message || refreshError?.response?.data?.Message || "Session could not be refreshed.";
         emitErrorToast(refreshMessage);
         return Promise.reject(refreshError);
       }
     }
 
-    const message = error?.response?.data?.message || error?.response?.data?.Message || "Islem sirasinda bir hata olustu.";
-    emitErrorToast(message);
+    const shouldToastError = !error?.config?.silentErrorToast;
+    if (shouldToastError) {
+      const message = error?.response?.data?.message || error?.response?.data?.Message || "An error occurred during the operation.";
+      emitErrorToast(message);
+    }
 
     return Promise.reject(error);
   }

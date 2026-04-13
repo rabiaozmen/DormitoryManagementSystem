@@ -66,12 +66,12 @@ export default function Allocations() {
     if (!targetRoom) return;
 
     if (!selectedStudentId) {
-      emitErrorToast("Lutfen atanacak ogrenciyi secin.");
+      emitErrorToast("Please select a student to assign.");
       return;
     }
 
     if (!guidRegex.test(selectedStudentId)) {
-      emitErrorToast("Secilen ogrenci ID formati gecersiz (UUID/Guid bekleniyor).");
+      emitErrorToast("Selected student ID format is invalid (UUID/Guid expected).");
       return;
     }
 
@@ -81,20 +81,20 @@ export default function Allocations() {
       closeAssignModal();
       await fetchData();
     } catch {
-      emitErrorToast("Ogrenci atanirken hata olustu. Oda dolu olabilir.");
+      emitErrorToast("Student could not be assigned. The room may be full.");
     } finally {
       setIsAssigning(false);
     }
   };
 
   const handleRemove = async (studentId) => {
-    if (!confirm("Bu öğrenciyi odadan çıkarmak istediğinize emin misiniz?")) return;
+    if (!confirm("Are you sure you want to remove this student from the room?")) return;
     try {
       setRemovingStudentId(studentId);
       await removeStudent(studentId);
       await fetchData();
     } catch {
-      emitErrorToast("Ogrenci odadan cikarilirken hata olustu.");
+      emitErrorToast("Student could not be removed from the room.");
     } finally {
       setRemovingStudentId(null);
     }
@@ -106,11 +106,11 @@ export default function Allocations() {
     <div className="space-y-8 animate-in fade-in zoom-in duration-500">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold text-white tracking-tight">Room Allocation Grid</h1>
-        <p className="text-zinc-400">Kart üzerine gelince ata aksiyonu aktif olur, öğrenci modalden aranıp seçilir.</p>
+        <p className="text-zinc-400">Assign students to rooms through the quick search modal.</p>
       </div>
 
       <Card className="p-4 bg-white/5 border-white/10 text-zinc-300 text-sm">
-        Atama bekleyen öğrenci sayısı: <span className="font-semibold text-indigo-300">{students.length}</span>
+        Students waiting for assignment: <span className="font-semibold text-indigo-300">{students.length}</span>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -179,7 +179,7 @@ export default function Allocations() {
                     onClick={() => openAssignModal(room)}
                     className="w-full bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 border border-indigo-400/30"
                   >
-                    <Plus className="w-4 h-4 mr-2" /> Ogrenci Ata
+                    <Plus className="w-4 h-4 mr-2" /> Assign Student
                   </Button>
                 </div>
               )}
@@ -207,8 +207,8 @@ export default function Allocations() {
             >
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">Room {targetRoom.roomNumber} - Ogrenci Ata</h3>
-                  <p className="text-xs text-zinc-400">Arama kutusu ile ogrenciyi bulup atayin.</p>
+                  <h3 className="text-lg font-semibold text-white">Room {targetRoom.roomNumber} - Assign Student</h3>
+                  <p className="text-xs text-zinc-400">Find a student using name, number, or UUID and assign instantly.</p>
                 </div>
                 <button onClick={closeAssignModal} className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200">
                   <X className="h-4 w-4" />
@@ -220,7 +220,7 @@ export default function Allocations() {
                 <input
                   value={studentSearch}
                   onChange={(event) => setStudentSearch(event.target.value)}
-                  placeholder="Ogrenci adi, numara veya UUID ile ara"
+                  placeholder="Search by student name, number, or UUID"
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-950 py-2 pl-9 pr-3 text-sm text-zinc-100 outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
@@ -257,7 +257,7 @@ export default function Allocations() {
 
               <div className="mt-4 flex justify-end gap-2">
                 <Button variant="outline" onClick={closeAssignModal}>
-                  Vazgec
+                  Cancel
                 </Button>
                 <Button
                   onClick={handleAssignSubmit}
@@ -265,7 +265,7 @@ export default function Allocations() {
                   disabled={!selectedStudentId || isAssigning}
                   className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60"
                 >
-                  Ata
+                  Assign
                 </Button>
               </div>
             </motion.div>

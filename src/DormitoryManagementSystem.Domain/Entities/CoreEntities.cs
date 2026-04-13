@@ -35,6 +35,7 @@ public sealed class Staff : User
 {
     public string StaffNumber { get; set; } = string.Empty;
     public bool IsAdmin { get; set; }
+    public decimal MonthlySalary { get; set; }
     public ICollection<Building> ManagedBuildings { get; set; } = new List<Building>();
 }
 
@@ -174,6 +175,7 @@ public sealed class Expense
     public decimal Amount { get; set; }
     public DateTime Date { get; set; } = DateTime.UtcNow;
     public ExpenseCategory Category { get; set; }
+    public Guid? StaffId { get; set; }
 }
 
 public sealed class DiningMenu

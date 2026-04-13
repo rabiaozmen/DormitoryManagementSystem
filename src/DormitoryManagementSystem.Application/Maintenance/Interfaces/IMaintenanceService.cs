@@ -8,4 +8,5 @@ public interface IMaintenanceService
     Task<MaintenanceRequest> CreateAsync(CreateMaintenanceRequest request, CancellationToken cancellationToken = default);
     Task<MaintenanceRequest?> UpdateStatusAsync(UpdateMaintenanceStatusRequest request, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<MaintenanceRequest>> GetOpenRequestsAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<MaintenanceTicketDto>> GetTicketsAsync(CancellationToken cancellationToken = default);
 }

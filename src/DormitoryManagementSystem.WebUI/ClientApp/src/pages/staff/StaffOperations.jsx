@@ -27,11 +27,11 @@ export default function StaffOperations() {
   const review = async (leaveRequestId, approve) => {
     try {
       setReviewingId(leaveRequestId);
-      await reviewLeaveRequest({ leaveRequestId, approve, staffNote: approve ? "Onaylandı" : "Reddedildi" });
+      await reviewLeaveRequest({ leaveRequestId, approve, staffNote: approve ? "Approved" : "Rejected" });
       await loadData();
     } catch (error) {
       console.error(error);
-      emitErrorToast("Islem basarisiz.");
+      emitErrorToast("Operation failed.");
     } finally {
       setReviewingId(null);
     }
@@ -41,7 +41,7 @@ export default function StaffOperations() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Leave and Entry/Exit Ops</h1>
-        <p className="text-slate-500 mt-1">İzin taleplerini yönet ve giriş-çıkış hareketlerini izle.</p>
+        <p className="text-slate-500 mt-1">Manage leave requests and monitor entry/exit activity.</p>
       </div>
 
       <Card>

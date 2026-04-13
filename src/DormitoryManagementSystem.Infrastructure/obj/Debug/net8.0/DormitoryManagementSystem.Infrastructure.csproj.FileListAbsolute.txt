@@ -17,3 +17,4 @@ C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Infrastructure\obj\Debug\net8.0\DormitoryManagementSystem.Infrastructure.pdb
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Infrastructure\obj\Debug\net8.0\DormitoryManagementSystem.Infrastructure.genruntimeconfig.cache
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Infrastructure\obj\Debug\net8.0\ref\DormitoryManagementSystem.Infrastructure.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Infrastructure\obj\Debug\net8.0\DormitoryManagementSystem.Infrastructure.sourcelink.json

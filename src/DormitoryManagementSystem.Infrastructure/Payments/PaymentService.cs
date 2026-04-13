@@ -32,11 +32,24 @@ public sealed class PaymentService(DmsDbContext dbContext) : IPaymentService
 
     public async Task<Payment> CreatePaymentAsync(Guid studentId, decimal amount, DateTime dueDate, CancellationToken cancellationToken = default)
     {
+        var utcDueDate = DateTime.SpecifyKind(dueDate, DateTimeKind.Utc);
+        var monthStart = new DateTime(utcDueDate.Year, utcDueDate.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var nextMonthStart = monthStart.AddMonths(1);
+
+        var alreadyExists = await dbContext.Payments.AnyAsync(
+            x => x.StudentId == studentId && x.DueDateUtc >= monthStart && x.DueDateUtc < nextMonthStart,
+            cancellationToken);
+
+        if (alreadyExists)
+        {
+            throw new InvalidOperationException("Bu öğrenci için bu ay faturası zaten oluşturulmuş.");
+        }
+
         var payment = new Payment
         {
             StudentId = studentId,
             Amount = amount,
-            DueDateUtc = DateTime.SpecifyKind(dueDate, DateTimeKind.Utc),
+            DueDateUtc = utcDueDate,
             Status = PaymentStatus.Pending
         };
 

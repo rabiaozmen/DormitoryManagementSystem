@@ -10,7 +10,6 @@ import DepartmentManagement from "./pages/admin/DepartmentManagement";
 import ExpenseManagement from "./pages/admin/ExpenseManagement";
 import DiningManagement from "./pages/admin/DiningManagement";
 import RoomMap from "./pages/admin/RoomMap";
-import { StaffWorkspace } from "./pages/staff/StaffWorkspace";
 import Allocations from "./pages/staff/Allocations";
 import { StudentPortal } from "./pages/student/StudentPortal";
 import PaymentHistory from "./pages/student/PaymentHistory";
@@ -18,6 +17,7 @@ import StudentOperations from "./pages/student/StudentOperations";
 import Profile from "./pages/shared/Profile";
 import DiningBoard from "./pages/shared/DiningBoard";
 import StaffOperations from "./pages/staff/StaffOperations";
+import MaintenanceTicketing from "./pages/staff/MaintenanceTicketing";
 import { ToastViewport } from "./components/ui/ToastViewport";
 
 function App() {
@@ -47,7 +47,8 @@ function App() {
 
           {/* Staff Routes */}
           <Route element={<DashboardLayout allowedRoles={["Staff"]} />}>
-            <Route path="/staff" element={<StaffWorkspace />} />
+            <Route path="/staff" element={<Navigate to="/staff/maintenance" replace />} />
+            <Route path="/staff/maintenance" element={<MaintenanceTicketing />} />
             <Route path="/staff/allocations" element={<Allocations />} />
             <Route path="/staff/operations" element={<StaffOperations />} />
             <Route path="/staff/dining" element={<DiningBoard />} />

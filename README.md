@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dormitory Management System (DMS)
 
 Clean Architecture based starter implementation aligned with the technical report:
@@ -77,3 +78,7 @@ npm run dev
 
 - Refresh token is written as `HttpOnly` cookie by `POST /api/auth/login`.
 - Access token renewal can be done with `POST /api/auth/refresh` without passing token in body.
+=======
+# DormitoryManagementSystem
+SENG321 - Dormitory Management System | .NET Core 8 MVC, PostgreSQL, React, Clean Architecture
+>>>>>>> 946416ee43c61c2ab2278d081bb787aac2f487d3

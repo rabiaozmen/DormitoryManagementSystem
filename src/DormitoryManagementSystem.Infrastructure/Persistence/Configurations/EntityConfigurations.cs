@@ -50,6 +50,7 @@ public sealed class StaffConfiguration : IEntityTypeConfiguration<Staff>
         builder.Property(x => x.PasswordHash).HasMaxLength(250).IsRequired();
         builder.Property(x => x.StaffNumber).HasMaxLength(40).IsRequired();
         builder.Property(x => x.IsAdmin).HasDefaultValue(false);
+        builder.Property(x => x.MonthlySalary).HasPrecision(18, 2).HasDefaultValue(0m);
         builder.HasIndex(x => x.Email).IsUnique();
         builder.HasIndex(x => x.StaffNumber).IsUnique();
     }
@@ -101,6 +102,18 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .WithMany(x => x.Payments)
             .HasForeignKey(x => x.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public sealed class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
+{
+    public void Configure(EntityTypeBuilder<Expense> builder)
+    {
+        builder.ToTable("Expenses");
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Amount).HasPrecision(18, 2).IsRequired();
+        builder.Property(x => x.Description).HasMaxLength(500).IsRequired();
+        builder.Property(x => x.StaffId).IsRequired(false);
     }
 }
 

@@ -44,6 +44,11 @@ const formatTimeAgo = (isoDate) => {
   return "just now";
 };
 
+const formatTlCurrency = (value) => {
+  const amount = Number(value) || 0;
+  return `₺${amount.toLocaleString("en-US")}`;
+};
+
 export const AdminDashboard = () => {
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(null);
@@ -174,6 +179,29 @@ export const AdminDashboard = () => {
     { key: "all", label: "All Time" },
   ];
 
+  const financialDateRangeLabel = useMemo(() => {
+    if (monthlyStats.length === 0) {
+      return "No data range";
+    }
+
+    if (monthlyStats.length === 1) {
+      return String(monthlyStats[0].month || "Single month");
+    }
+
+    const first = String(monthlyStats[0].month || "").trim();
+    const last = String(monthlyStats[monthlyStats.length - 1].month || "").trim();
+
+    if (!first && !last) {
+      return "No data range";
+    }
+
+    if (!first || !last || first === last) {
+      return first || last;
+    }
+
+    return `${first} - ${last}`;
+  }, [monthlyStats]);
+
   const urgentRequests = useMemo(
     () =>
       maintenanceRequests
@@ -298,7 +326,7 @@ export const AdminDashboard = () => {
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Financial Analysis</h2>
-              <p className="mt-1 text-sm text-slate-500">Monthly income and expense trends.</p>
+              <p className="mt-1 text-sm text-slate-500">Monthly income and expense trends ({financialDateRangeLabel}).</p>
             </div>
             <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1 text-xs font-semibold text-slate-500 shadow-sm">
               {chartRangeOptions.map((option) => {
@@ -323,8 +351,19 @@ export const AdminDashboard = () => {
               <LineChart data={monthlyStats}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  tickFormatter={(value) => formatTlCurrency(value)}
+                  width={90}
+                />
                 <Tooltip
+                  formatter={(value, name) => {
+                    const metricName = name === "revenue" ? "Revenue" : name === "expenses" ? "Expenses" : String(name);
+                    return [formatTlCurrency(value), metricName];
+                  }}
+                  labelFormatter={(label) => `Month: ${label}`}
                   contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 20px -5px rgb(15 23 42 / 0.12)" }}
                 />
                 <Legend verticalAlign="top" height={36} />
@@ -332,19 +371,19 @@ export const AdminDashboard = () => {
                   type="monotone"
                   dataKey="revenue"
                   name="Income"
-                  stroke="#10b981"
+                  stroke="#16DB93"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "#10b981" }}
-                  activeDot={{ r: 6 }}
+                  dot={{ r: 4, fill: "#16DB93" }}
+                  activeDot={{ r: 7 }}
                 />
                 <Line
                   type="monotone"
                   dataKey="expenses"
                   name="Expenses"
-                  stroke="#ef4444"
+                  stroke="#FF5A5F"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "#ef4444" }}
-                  activeDot={{ r: 6 }}
+                  dot={{ r: 4, fill: "#FF5A5F" }}
+                  activeDot={{ r: 7 }}
                 />
               </LineChart>
             </ResponsiveContainer>

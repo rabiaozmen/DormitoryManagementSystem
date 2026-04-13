@@ -21,7 +21,8 @@ public sealed class ExpenseService(DmsDbContext dbContext) : IExpenseService
             Description = request.Description,
             Amount = request.Amount,
             Category = request.Category,
-            Date = DateTime.SpecifyKind(request.Date, DateTimeKind.Utc)
+            Date = DateTime.SpecifyKind(request.Date, DateTimeKind.Utc),
+            StaffId = request.StaffId
         };
 
         dbContext.Expenses.Add(expense);

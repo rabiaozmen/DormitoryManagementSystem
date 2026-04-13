@@ -14,4 +14,5 @@ public class CreateExpenseDto
     public decimal Amount { get; set; }
     public ExpenseCategory Category { get; set; }
     public DateTime Date { get; set; } = DateTime.UtcNow;
+    public Guid? StaffId { get; set; }
 }

@@ -32,8 +32,8 @@ export const getAllPayments = async () => {
     return res.data;
 }
 
-export const createPayment = async (payload) => {
-    return apiClient.post("/api/payments", payload);
+export const createPayment = async (payload, requestConfig = {}) => {
+    return apiClient.post("/api/payments", payload, requestConfig);
 }
 
 export const markPaymentPaid = async (paymentId) => {
@@ -42,6 +42,11 @@ export const markPaymentPaid = async (paymentId) => {
 
 export const getStaffRequests = async () => {
     const res = await apiClient.get("/api/maintenance/open");
+    return res.data;
+}
+
+export const getMaintenanceTickets = async () => {
+    const res = await apiClient.get("/api/maintenance/tickets");
     return res.data;
 }
 
@@ -137,6 +142,15 @@ export const getExpenses = async () => {
 
 export const createExpense = async (payload) => {
     return apiClient.post("/api/admin/expenses", payload);
+}
+
+export const getAdminStaff = async () => {
+    const res = await apiClient.get("/api/admin/staff");
+    return res.data;
+}
+
+export const updateStaffMonthlySalary = async (staffId, monthlySalary) => {
+    return apiClient.put(`/api/admin/staff/${staffId}/monthly-salary`, { monthlySalary });
 }
 
 // Dining

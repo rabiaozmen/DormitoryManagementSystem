@@ -10,7 +10,7 @@ public sealed class MaintenanceService(DmsDbContext dbContext) : IMaintenanceSer
 {
     public async Task<MaintenanceRequest> CreateAsync(CreateMaintenanceRequest request, CancellationToken cancellationToken = default)
     {
-        var ticket = $"TKT-{DateTime.UtcNow:yyMMdd}-{Random.Shared.Next(1000, 9999)}";
+        var ticket = $"TKT-{Random.Shared.Next(1000, 9999)}";
         var entity = new MaintenanceRequest
         {
             RoomId = request.RoomId,
@@ -22,6 +22,10 @@ public sealed class MaintenanceService(DmsDbContext dbContext) : IMaintenanceSer
         };
         dbContext.MaintenanceRequests.Add(entity);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        entity.TicketCode = $"TKT-{entity.Id % 10000:0000}";
+        await dbContext.SaveChangesAsync(cancellationToken);
+
         return entity;
     }
 
@@ -58,6 +62,28 @@ public sealed class MaintenanceService(DmsDbContext dbContext) : IMaintenanceSer
         return await dbContext.MaintenanceRequests
             .Where(x => x.Status != MaintenanceStatus.Resolved)
             .OrderByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<MaintenanceTicketDto>> GetTicketsAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.MaintenanceRequests
+            .Include(x => x.Student)
+            .ThenInclude(s => s!.Room)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new MaintenanceTicketDto
+            {
+                Id = x.Id,
+                TicketCode = $"TKT-{x.Id % 10000:0000}",
+                StudentId = x.StudentId,
+                StudentName = x.Student != null ? $"{x.Student.FirstName} {x.Student.LastName}" : "Unknown Student",
+                RoomNumber = x.Student != null && x.Student.Room != null ? x.Student.Room.RoomNumber : "N/A",
+                Description = x.Description,
+                Priority = x.Priority,
+                Status = x.Status,
+                CreatedAtUtc = x.CreatedAtUtc,
+                ResolvedAtUtc = x.ResolvedAtUtc
+            })
             .ToListAsync(cancellationToken);
     }
 }

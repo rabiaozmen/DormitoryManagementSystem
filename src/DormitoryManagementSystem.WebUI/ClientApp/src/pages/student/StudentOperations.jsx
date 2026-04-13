@@ -30,7 +30,7 @@ export default function StudentOperations() {
 
   const submitLeave = async (event) => {
     event.preventDefault();
-    setStatus("Gönderiliyor...");
+    setStatus("Submitting...");
 
     try {
       setLeaveSubmitting(true);
@@ -42,11 +42,11 @@ export default function StudentOperations() {
       });
 
       setForm({ type: 0, startAtUtc: "", endAtUtc: "", reason: "" });
-      setStatus("İzin talebi oluşturuldu.");
+      setStatus("Leave request created.");
       await loadData();
     } catch (error) {
-      setStatus(error?.response?.data?.message || "Talep oluşturulamadı.");
-      emitErrorToast(error?.response?.data?.message || error?.response?.data?.Message || "Talep olusturulamadi.");
+      setStatus(error?.response?.data?.message || "Request could not be created.");
+      emitErrorToast(error?.response?.data?.message || error?.response?.data?.Message || "Request could not be created.");
     } finally {
       setLeaveSubmitting(false);
     }
@@ -59,7 +59,7 @@ export default function StudentOperations() {
       await loadData();
     } catch (error) {
       console.error(error);
-      emitErrorToast("Islem kaydedilemedi.");
+      emitErrorToast("Action could not be recorded.");
     } finally {
       setLoggingType(null);
     }
@@ -77,7 +77,7 @@ export default function StudentOperations() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Leave and Entry/Exit</h1>
-        <p className="text-slate-500 mt-1">Evci/gece izni talep et ve giriş-çıkış kayıtlarını yönet.</p>
+        <p className="text-slate-500 mt-1">Submit leave requests and manage your entry/exit records.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -113,11 +113,11 @@ export default function StudentOperations() {
                 value={form.reason}
                 onChange={(event) => setForm((prev) => ({ ...prev, reason: event.target.value }))}
                 className="w-full rounded-lg border border-slate-200 px-3 py-2 h-24"
-                placeholder="İzin nedeni"
+                placeholder="Reason for leave"
                 required
               />
               <Button type="submit" loading={leaveSubmitting} className="w-full bg-indigo-600 hover:bg-indigo-700">
-                <Send size={14} className="mr-2" /> Talep Gönder
+                <Send size={14} className="mr-2" /> Submit Request
               </Button>
               {status ? <p className="text-sm text-slate-600">{status}</p> : null}
             </form>

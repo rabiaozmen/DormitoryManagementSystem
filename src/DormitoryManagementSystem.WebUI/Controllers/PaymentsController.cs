@@ -29,8 +29,15 @@ public sealed class PaymentsController(IPaymentService paymentService) : Control
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create([FromBody] CreatePaymentRequest request, CancellationToken cancellationToken)
     {
-        var result = await paymentService.CreatePaymentAsync(request.StudentId, request.Amount, request.DueDate, cancellationToken);
-        return Ok(result);
+        try
+        {
+            var result = await paymentService.CreatePaymentAsync(request.StudentId, request.Amount, request.DueDate, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { Message = ex.Message });
+        }
     }
 
     [HttpGet("me")]

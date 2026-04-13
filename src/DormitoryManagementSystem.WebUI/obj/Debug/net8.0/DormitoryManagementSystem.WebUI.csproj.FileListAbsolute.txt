@@ -133,3 +133,4 @@ C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.WebUI\bin\Debug\net8.0\ClientApp\package-lock.json
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.WebUI\bin\Debug\net8.0\Npgsql.dll
 C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.WebUI\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.WebUI\obj\Debug\net8.0\DormitoryManagementSystem.WebUI.sourcelink.json

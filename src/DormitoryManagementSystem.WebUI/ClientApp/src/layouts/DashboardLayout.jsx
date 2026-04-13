@@ -31,7 +31,7 @@ export const DashboardLayout = ({ allowedRoles = [] }) => {
         ];
       case "Staff":
         return [
-          { icon: LayoutDashboard, label: "Maintenance", path: "/staff" },
+          { icon: LayoutDashboard, label: "Maintenance", path: "/staff/maintenance" },
           { icon: User, label: "Allocations", path: "/staff/allocations" },
           { icon: ClipboardList, label: "Operations", path: "/staff/operations" },
           { icon: Utensils, label: "Dining", path: "/staff/dining" },

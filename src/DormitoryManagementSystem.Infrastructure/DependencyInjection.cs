@@ -23,6 +23,8 @@ using DormitoryManagementSystem.Application.Dining.Interfaces;
 using DormitoryManagementSystem.Infrastructure.Dining;
 using DormitoryManagementSystem.Application.Operations.Interfaces;
 using DormitoryManagementSystem.Infrastructure.Operations;
+using DormitoryManagementSystem.Application.Staff.Interfaces;
+using DormitoryManagementSystem.Infrastructure.StaffDirectory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<IDiningService, DiningService>();
         services.AddScoped<ILeaveAndLogService, LeaveAndLogService>();
+        services.AddScoped<IStaffDirectoryService, StaffDirectoryService>();
 
         return services;
     }
