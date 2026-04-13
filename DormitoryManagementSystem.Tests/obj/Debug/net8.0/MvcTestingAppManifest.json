@@ -1,0 +1,6 @@
+{
+  "DormitoryManagementSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\Lenovo\\Desktop\\DormitoryManagemnetSystem\\src\\DormitoryManagementSystem.Application",
+  "DormitoryManagementSystem.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\Lenovo\\Desktop\\DormitoryManagemnetSystem\\src\\DormitoryManagementSystem.Domain",
+  "DormitoryManagementSystem.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\Lenovo\\Desktop\\DormitoryManagemnetSystem\\src\\DormitoryManagementSystem.Infrastructure",
+  "DormitoryManagementSystem.WebUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\Lenovo\\Desktop\\DormitoryManagemnetSystem\\src\\DormitoryManagementSystem.WebUI"
+}

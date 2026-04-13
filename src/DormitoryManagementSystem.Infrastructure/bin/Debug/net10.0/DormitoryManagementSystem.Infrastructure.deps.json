@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "DormitoryManagementSystem.Infrastructure/1.0.0": {
+        "dependencies": {
+          "DormitoryManagementSystem.Application": "1.0.0",
+          "DormitoryManagementSystem.Domain": "1.0.0"
+        },
+        "runtime": {
+          "DormitoryManagementSystem.Infrastructure.dll": {}
+        }
+      },
+      "DormitoryManagementSystem.Application/1.0.0": {
+        "dependencies": {
+          "DormitoryManagementSystem.Domain": "1.0.0"
+        },
+        "runtime": {
+          "DormitoryManagementSystem.Application.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "DormitoryManagementSystem.Domain/1.0.0": {
+        "runtime": {
+          "DormitoryManagementSystem.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DormitoryManagementSystem.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DormitoryManagementSystem.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DormitoryManagementSystem.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,15 @@
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\bin\Debug\net10.0\DormitoryManagementSystem.Application.deps.json
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\bin\Debug\net10.0\DormitoryManagementSystem.Application.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\bin\Debug\net10.0\DormitoryManagementSystem.Application.pdb
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\bin\Debug\net10.0\DormitoryManagementSystem.Domain.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\bin\Debug\net10.0\DormitoryManagementSystem.Domain.pdb
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.AssemblyInfo.cs
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\Dormitor.5F77CAB7.Up2Date
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\refint\DormitoryManagementSystem.Application.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\DormitoryManagementSystem.Application.pdb
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Application\obj\Debug\net10.0\ref\DormitoryManagementSystem.Application.dll

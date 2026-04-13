@@ -1,0 +1,8 @@
+namespace DormitoryManagementSystem.Application.Security.Models;
+
+public sealed class TokenRequest
+{
+    public Guid UserId { get; init; }
+    public string Email { get; init; } = string.Empty;
+    public string Role { get; init; } = string.Empty;
+}

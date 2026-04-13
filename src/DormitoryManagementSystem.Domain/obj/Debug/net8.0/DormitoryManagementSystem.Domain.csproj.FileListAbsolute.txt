@@ -1,0 +1,11 @@
+c:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\bin\Debug\net8.0\DormitoryManagementSystem.Domain.deps.json
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\bin\Debug\net8.0\DormitoryManagementSystem.Domain.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\bin\Debug\net8.0\DormitoryManagementSystem.Domain.pdb
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.AssemblyInfo.cs
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\refint\DormitoryManagementSystem.Domain.dll
+C:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\DormitoryManagementSystem.Domain.pdb
+c:\Users\Lenovo\Desktop\DormitoryManagemnetSystem\src\DormitoryManagementSystem.Domain\obj\Debug\net8.0\ref\DormitoryManagementSystem.Domain.dll
