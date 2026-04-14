@@ -58,11 +58,14 @@ export const AdminDashboard = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedChartRange, setSelectedChartRange] = useState("12");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const loadData = async () => {
     setLoading(true);
+    setLoadError("");
+
     try {
-      const [dashData, paymentsData, studentsData, requestsData, roomsData] = await Promise.all([
+      const [dashResult, paymentsResult, studentsResult, requestsResult, roomsResult] = await Promise.allSettled([
         getAdminDashboard(),
         getPendingPayments(),
         getAllStudents(),
@@ -70,13 +73,35 @@ export const AdminDashboard = () => {
         getRooms(),
       ]);
 
-      setDashboard(dashData);
-      setPendingPayments(paymentsData);
-      setStudents(studentsData);
-      setMaintenanceRequests(requestsData);
-      setRooms(roomsData);
+      if (dashResult.status === "fulfilled") {
+        setDashboard(dashResult.value);
+      } else {
+        setDashboard(null);
+        const dashboardMessage =
+          dashResult.reason?.response?.data?.message ||
+          dashResult.reason?.response?.data?.Message ||
+          "Dashboard data could not be loaded.";
+        setLoadError(dashboardMessage);
+      }
+
+      if (paymentsResult.status === "fulfilled") {
+        setPendingPayments(paymentsResult.value);
+      }
+
+      if (studentsResult.status === "fulfilled") {
+        setStudents(studentsResult.value);
+      }
+
+      if (requestsResult.status === "fulfilled") {
+        setMaintenanceRequests(requestsResult.value);
+      }
+
+      if (roomsResult.status === "fulfilled") {
+        setRooms(roomsResult.value);
+      }
     } catch (e) {
-      console.error(e);
+      console.error("Dashboard load error", e);
+      setLoadError("Dashboard data could not be loaded.");
     } finally {
       setLoading(false);
     }
@@ -277,7 +302,13 @@ export const AdminDashboard = () => {
   }, [students, maintenanceRequests]);
 
   if (loading) return <div className="p-8 text-center text-slate-500">Loading dashboard...</div>;
-  if (!dashboard) return <div className="p-8 text-center text-red-500">Dashboard could not be loaded. Check that the backend is running.</div>;
+  if (!dashboard) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        {loadError || "Dashboard could not be loaded. Please refresh or login again."}
+      </div>
+    );
+  }
 
   const expenseColors = ["#6366f1", "#f59e0b", "#ef4444", "#10b981", "#64748b"];
 
@@ -408,17 +439,19 @@ export const AdminDashboard = () => {
                   No payments are waiting for approval.
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[220px] overflow-auto pr-1">
+                <div className="space-y-3 max-h-[260px] overflow-auto pr-1">
                   {pendingPayments.slice(0, 4).map((payment) => (
-                    <div key={payment.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:shadow transition-shadow">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900">Student #{payment.studentId}</p>
-                          <p className="mt-1 text-xs text-slate-500">Invoice #{payment.id}</p>
+                    <div key={payment.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-base font-bold text-slate-900">{payment.studentFullName || "Unknown Student"}</p>
+                          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                            <span>Invoice #{payment.id}</span>
+                          </div>
                         </div>
-                        <span className="text-sm font-bold text-slate-900">TL {payment.amount}</span>
+                        <span className="shrink-0 text-base font-bold text-slate-900">TL {payment.amount}</span>
                       </div>
-                      <Button onClick={() => handleMarkPaid(payment.id)} className="mt-3 w-full bg-emerald-600 hover:bg-emerald-700">
+                      <Button onClick={() => handleMarkPaid(payment.id)} className="mt-4 w-full bg-emerald-600 hover:bg-emerald-700">
                         Approve Payment
                       </Button>
                     </div>
@@ -555,10 +588,12 @@ export const AdminDashboard = () => {
         ) : (
           <ul className="divide-y divide-slate-100">
             {pendingPayments.map((payment) => (
-              <li key={payment.id} className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-semibold text-slate-900">Student No: {payment.studentId}</p>
-                  <p className="text-sm text-slate-500">Invoice #{payment.id}</p>
+              <li key={payment.id} className="flex flex-col gap-4 py-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-base font-semibold text-slate-900">{payment.studentFullName || "Unknown Student"}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+                    <span>Invoice #{payment.id}</span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-lg font-bold text-slate-700">TL {payment.amount}</span>
